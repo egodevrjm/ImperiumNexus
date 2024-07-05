@@ -46,6 +46,20 @@ const EmpireManagementGame = () => {
 
     const playerCities = initializeNationCities(selectedNation);
 
+    const initialPlayerData = {
+      ...selectedNation,
+      isAI: false,
+      resources: { 
+        gold: 1000, 
+        food: 500, 
+        production: 300, 
+        science: 0 
+      },
+      cities: playerCities,
+      military: { [selectedNation.specialUnit]: 1 },
+      researchedTechs: []
+    };
+    
     const allPlayers = [
       {
         ...selectedNation,
@@ -60,7 +74,7 @@ const EmpireManagementGame = () => {
 
     setGameState({
       turn: 1,
-      players: allPlayers,
+      players: [initialPlayerData, ...aiNations],
       currentPlayer: 0,
       resources: { ...initialResources, science: 0 },
       cities: playerCities,
@@ -143,7 +157,7 @@ const EmpireManagementGame = () => {
             ...city,
             production: {
               ...city.production,
-              [resource]: (city.production[resource] || 0) + amount
+              [resource]: Math.max((city.production[resource] || 0) + amount, 0)
             }
           };
         }
@@ -288,12 +302,12 @@ const EmpireManagementGame = () => {
           resources={gameState.resources}
           onBuild={handleBuild}
         />;
-      case 'resourceManagement': 
+        case 'resourceManagement': 
         return <ResourceManagement 
-        resources={currentPlayerData.resources} 
-        cities={currentPlayerData.cities}
-        onAllocateWorker={handleAllocateWorker}
-      />;
+          resources={currentPlayerData?.resources || {}}
+          cities={currentPlayerData?.cities || []}
+          onAllocateWorker={handleAllocateWorker}
+        />;
       case 'diplomacy': 
         return <Diplomacy diplomacy={gameState.diplomacy} players={gameState.players} playerNation={playerNation} />;
       case 'technologyTree': 

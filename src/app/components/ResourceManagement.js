@@ -2,7 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 
-const ResourceManagement = ({ resources, cities, onAllocateWorker }) => {
+const DEFAULT_RESOURCES = {
+  gold: 0,
+  food: 0,
+  production: 0,
+  science: 0
+};
+
+const ResourceManagement = ({ resources = DEFAULT_RESOURCES, cities = [], onAllocateWorker }) => {
   const [selectedCity, setSelectedCity] = useState(null);
 
   useEffect(() => {
@@ -58,7 +65,7 @@ const ResourceManagement = ({ resources, cities, onAllocateWorker }) => {
         {selectedCity && (
           <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded">
             <h4 className="font-bold mb-2">{selectedCity.name}</h4>
-            {Object.entries(resources).map(([resource]) => (
+            {Object.keys(resources).map(resource => (
               <div key={resource} className="flex justify-between items-center mb-2">
                 <span className="capitalize">{resource}:</span>
                 <span>{selectedCity.production?.[resource] || 0} per turn</span>
